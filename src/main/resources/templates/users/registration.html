@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="UTF-8">
+        <title>Register</title>
+    </head>
+    <body>
+        <h3>REGISTRATION FORM</h3>
+        <form th:method="POST" th:action="@{/users/registration}" th:object="${user}">
+            <label for="firstName"> Enter first name </label>
+            <input type="text" th:field="*{firstName}" id="firstName" required>
+            <div style="color: orangered" th:errors="*{firstName}"> Error </div>
+            <hr>
+            <label for="lastName"> Enter last name </label>
+            <input type="text" th:field="*{lastName}" id="lastName" required>
+            <div style="color: orangered" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"> Error </div>
+            <hr>
+            <label for="email"> Enter email </label>
+            <input type="text" th:field="*{email}" id="email" required>
+            <div style="color: orangered" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"> Error </div>
+            <hr>
+
+            <label for="username"> Enter username </label>
+            <input type="text" th:field="*{username}" id="username" required>
+            <div style="color: orangered" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"> Error </div>
+            <hr>
+
+            <label for="password"> Enter password </label>
+            <input type="text" th:field="*{password}" id="password" required>
+            <div style="color: orangered" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"> Error </div>
+            <hr>
+
+            <input type="submit" value="Register!">
+        </form>
+        <div sec:authorize="isAnonymous()" >
+            <a href="/login"> ALREADY_REGISTERED </a>
+        </div>
+        <div>
+            <a href="/"> GO_HOME </a>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="UTF-8">
+        <title>Edit user</title>
+    </head>
+    <body>
+        <form th:method="PATCH" th:action="@{/users/{id}(id = ${user.getId()})}" th:object="${user}">
+
+            <label for="firstName"> Enter first name </label>
+            <input type="text" th:field="*{firstName}" id="firstName" required>
+            <div style="color: orangered" th:errors="*{firstName}"> Error </div>
+            <hr>
+
+            <label for="lastName"> Enter last name </label>
+            <input type="text" th:field="*{lastName}" id="lastName" required>
+            <div style="color: orangered" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"> Error </div>
+            <hr>
+
+            <label for="email"> Enter email </label>
+            <input type="email" th:field="*{email}" id="email" required>
+            <div style="color: orangered" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"> Error </div>
+            <hr>
+
+            <label for="username"> Enter username </label>
+            <input type="text" th:field="*{username}" id="username" required>
+            <div style="color: orangered" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"> Error </div>
+            <hr>
+
+            <label for="password"> Enter password (hash) </label>
+            <input type="text" th:field="*{password}" id="password" required>
+            <div style="color: orangered" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"> Error </div>
+            <hr>
+
+
+            <input type="submit" value="Update user">
+        </form>
+        <div>
+            <a href="/users"> RETURN_TO_USER_LIST </a>
+        </div>
+
+        <div>
+            <a href="/"> GO_HOME </a>
+        </div>
+
+        <div sec:authorize="isAuthenticated()">
+            <a href="/logout"> LOGOUT</a>
+        </div>
+
+    </body>
+</html>
