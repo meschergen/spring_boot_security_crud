@@ -42,6 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.formLogin()
+                .loginPage("/login")
                 .successHandler(loginSuccessHandler)
                 .usernameParameter("username")
                 .passwordParameter("password")
@@ -55,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable(); // выключение кроссдоменной секьюрности
 
         http.authorizeRequests()
-                .antMatchers("/login").anonymous()
+                //.antMatchers("/login").anonymous()
                 .antMatchers("/users").hasRole("ADMIN")
                 .antMatchers("/users/registration").anonymous()
                 .antMatchers("/users/info/**").hasAnyRole("USER", "ADMIN")

@@ -66,7 +66,36 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.1.6.Final</version>
 		</dependency>
-    </dependencies>
+
+		<!-- https://mvnrepository.com/artifact/org.webjars/bootstrap -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>4.5.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.webjars.npm/popper.js -->
+		<dependency>
+			<groupId>org.webjars.npm</groupId>
+			<artifactId>popper.js</artifactId>
+			<version>1.16.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.webjars.bower/jquery -->
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>jquery</artifactId>
+			<version>3.5.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.webjars/webjars-locator -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator</artifactId>
+			<version>0.40</version>
+		</dependency>
+
+	</dependencies>
 
 	<build>
 		<plugins>
