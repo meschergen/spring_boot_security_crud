@@ -1,22 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html layout:decorate="~{layouts/layout}" lang="en" xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
-        <meta charset="UTF-8">
         <title>User info</title>
     </head>
     <body>
-        <p th:utext="${user.toStringHTML()}"></p>
+        <div layout:fragment="content">
+            <p th:utext="${user.toStringHTML()}"></p>
 
-        <div sec:authorize="hasRole('ADMIN')">
-            <a href="/users"> RETURN_TO_USER_LIST </a>
-        </div>
-
-        <div>
-            <a href="/"> GO_HOME </a>
-        </div>
-
-        <div sec:authorize="isAuthenticated()">
-            <a href="/logout"> LOGOUT</a>
+            <div sec:authorize="hasRole('ADMIN')">
+                <a href="/users"> RETURN_TO_USER_LIST </a>
+            </div>
         </div>
     </body>
 </html>

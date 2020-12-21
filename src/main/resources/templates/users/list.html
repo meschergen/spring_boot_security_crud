@@ -1,52 +1,53 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html layout:decorate="~{layouts/layout}" lang="en" xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <meta charset="UTF-8">
         <title>UserList</title>
     </head>
     <body>
-    <!--suppress HtmlDeprecatedAttribute -->
-        <table border="1">
-            <tr>
-                <th> ID </th>
-                <th> Name </th>
-                <th> Surname </th>
-                <th> Email </th>
-                <th> Username </th>
-                <th> Password </th>
-                <th> Info </th>
-                <th> Edit </th>
-                <th> Delete </th>
+    <div layout:fragment="content">
+        <!--suppress HtmlDeprecatedAttribute -->
+            <table border="1">
+                <tr>
+                    <th> ID </th>
+                    <th> Name </th>
+                    <th> Surname </th>
+                    <th> Email </th>
+                    <th> Username </th>
+                    <th> Password </th>
+                    <th> Info </th>
+                    <th> Edit </th>
+                    <th> Delete </th>
 
-            </tr>
-            <tr th:each="user : ${userList}">
-                <td th:utext="${user.getId()}"> ID </td>
-                <td th:utext="${user.getFirstName()}"> Name </td>
-                <td th:utext="${user.getLastName()}"> Surname </td>
-                <td th:utext="${user.getEmail()}"> Email </td>
-                <td th:utext="${user.getUsername()}"> Username </td>
-                <td th:utext="${user.getPassword()}"> Password </td>
-                <td> <a th:href="@{/users/{id}(id=${user.getId()})}" th:utext="Link"> Info </a> </td>
-                <td> <a th:href="@{/users/{id}/edit(id=${user.getId()})}" th:utext="Edit"> Edit </a> </td>
-                <td>
-                    <form th:action="@{/users/{id}(id=${user.getId()})}" th:method="DELETE">
-                        <input type="submit" value="Delete">
-                    </form>
-                </td>
-            </tr >
-        </table>
+                </tr>
+                <tr th:each="user : ${userList}">
+                    <td th:utext="${user.getId()}"> ID </td>
+                    <td th:utext="${user.getFirstName()}"> Name </td>
+                    <td th:utext="${user.getLastName()}"> Surname </td>
+                    <td th:utext="${user.getEmail()}"> Email </td>
+                    <td th:utext="${user.getUsername()}"> Username </td>
+                    <td th:utext="${user.getPassword()}"> Password </td>
+                    <td> <a th:href="@{/users/{id}(id=${user.getId()})}" th:utext="Link"> Info </a> </td>
+                    <td> <a th:href="@{/users/{id}/edit(id=${user.getId()})}" th:utext="Edit"> Edit </a> </td>
+                    <td>
+                        <form th:action="@{/users/{id}(id=${user.getId()})}" th:method="DELETE">
+                            <input type="submit" value="Delete">
+                        </form>
+                    </td>
+                </tr >
+            </table>
 
-        <div>
-            <a href="/users/new"> ADD_USER </a>
+            <div>
+                <a href="/users/new"> ADD_USER </a>
+            </div>
+
+            <div>
+                <a href="/"> GO_HOME </a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()">
+                <a href="/logout"> LOGOUT</a>
+            </div>
         </div>
-
-        <div>
-            <a href="/"> GO_HOME </a>
-        </div>
-
-        <div sec:authorize="isAuthenticated()">
-            <a href="/logout"> LOGOUT</a>
-        </div>
-
     </body>
 </html>
