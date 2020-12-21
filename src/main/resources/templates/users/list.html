@@ -6,21 +6,20 @@
     </head>
     <body>
     <div layout:fragment="content">
-        <!--suppress HtmlDeprecatedAttribute -->
-            <table border="1">
+            <table class="table table-hover">
                 <tr>
-                    <th> ID </th>
-                    <th> Name </th>
-                    <th> Surname </th>
-                    <th> Email </th>
-                    <th> Username </th>
-                    <th> Password </th>
-                    <th> Info </th>
-                    <th> Edit </th>
-                    <th> Delete </th>
+                    <th scope="col"> ID </th>
+                    <th scope="col"> Name </th>
+                    <th scope="col"> Surname </th>
+                    <th scope="col"> Email </th>
+                    <th scope="col"> Username </th>
+                    <th scope="col"> Password </th>
+                    <th scope="col"> Info </th>
+                    <th scope="col"> Edit </th>
+                    <th scope="col"> Delete </th>
 
                 </tr>
-                <tr th:each="user : ${userList}">
+                <tr  th:each="user : ${userList}">
                     <td th:utext="${user.getId()}"> ID </td>
                     <td th:utext="${user.getFirstName()}"> Name </td>
                     <td th:utext="${user.getLastName()}"> Surname </td>
@@ -31,7 +30,7 @@
                     <td> <a th:href="@{/users/{id}/edit(id=${user.getId()})}" th:utext="Edit"> Edit </a> </td>
                     <td>
                         <form th:action="@{/users/{id}(id=${user.getId()})}" th:method="DELETE">
-                            <input type="submit" value="Delete">
+                            <button type="submit" class="btn btn-danger"> Delete </button>
                         </form>
                     </td>
                 </tr >
@@ -39,14 +38,6 @@
 
             <div>
                 <a href="/users/new"> ADD_USER </a>
-            </div>
-
-            <div>
-                <a href="/"> GO_HOME </a>
-            </div>
-
-            <div sec:authorize="isAuthenticated()">
-                <a href="/logout"> LOGOUT</a>
             </div>
         </div>
     </body>

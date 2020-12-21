@@ -1,42 +1,46 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html layout:decorate="~{layouts/layout}" lang="en" xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <meta charset="UTF-8">
         <title>Register</title>
     </head>
     <body>
-        <h3>REGISTRATION FORM</h3>
-        <form th:method="POST" th:action="@{/users/registration}" th:object="${user}">
-            <label for="firstName"> Enter first name </label>
-            <input type="text" th:field="*{firstName}" id="firstName" required>
-            <div style="color: orangered" th:errors="*{firstName}"> Error </div>
-            <hr>
-            <label for="lastName"> Enter last name </label>
-            <input type="text" th:field="*{lastName}" id="lastName" required>
-            <div style="color: orangered" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"> Error </div>
-            <hr>
-            <label for="email"> Enter email </label>
-            <input type="text" th:field="*{email}" id="email" required>
-            <div style="color: orangered" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"> Error </div>
-            <hr>
+        <div layout:fragment="content" class="col-md-6 offset-md-3 mt-5">
+            <h3 class="d-flex justify-content-center"> REGISTRATION FORM </h3>
+            <form th:method="POST" th:action="@{/users/registration}" th:object="${user}">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <input type="text" th:field="*{username}" id="username" class="form-control" placeholder="Enter username" required>
+                        <div style="color: orangered" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"> Error </div>
+                    </div>
 
-            <label for="username"> Enter username </label>
-            <input type="text" th:field="*{username}" id="username" required>
-            <div style="color: orangered" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"> Error </div>
-            <hr>
+                    <div class="form-group col-md-6">
+                        <input type="text" th:field="*{password}" id="password" class="form-control" placeholder="Enter password" required>
+                        <div style="color: orangered" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"> Error </div>
+                    </div>
+                </div>
 
-            <label for="password"> Enter password </label>
-            <input type="text" th:field="*{password}" id="password" required>
-            <div style="color: orangered" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"> Error </div>
-            <hr>
+                <div class="form-row d-block">
+                    <div class="form-group">
+                        <input type="text" th:field="*{email}" id="email" class="form-control" placeholder="Enter email" required>
+                        <div style="color: orangered" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"> Error </div>
+                    </div>
+                </div>
 
-            <input type="submit" value="Register!">
-        </form>
-        <div sec:authorize="isAnonymous()" >
-            <a href="/login"> ALREADY_REGISTERED </a>
-        </div>
-        <div>
-            <a href="/"> GO_HOME </a>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <input type="text" th:field="*{firstName}" id="firstName" class="form-control" placeholder="Enter first name" required>
+                        <div style="color: orangered" th:errors="*{firstName}"> Error </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <input type="text" th:field="*{lastName}" id="lastName" class="form-control" placeholder="Enter last name" required>
+                        <div style="color: orangered" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"> Error </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-block"> Sign up! </button>
+            </form>
         </div>
     </body>
 </html>
