@@ -5,11 +5,23 @@
     </head>
     <body>
         <div layout:fragment="content">
-            <p th:utext="${user.toStringHTML()}"></p>
-
-            <div sec:authorize="hasRole('ADMIN')">
-                <a href="/users"> RETURN_TO_USER_LIST </a>
-            </div>
+            <table class="table table-hover">
+                <tr>
+                    <th scope="col"> ID </th>
+                    <th scope="col"> Name </th>
+                    <th scope="col"> Surname </th>
+                    <th scope="col"> Email </th>
+                    <th scope="col"> Role </th>
+                </tr>
+                <tr>
+                    <td th:utext="${user.getId()}"> ID </td>
+                    <td th:utext="${user.getFirstName()}"> Name </td>
+                    <td th:utext="${user.getLastName()}"> Surname </td>
+                    <td th:utext="${user.getEmail()}"> Email </td>
+                    <td th:each="role : ${user.getAuthorities()}" th:text="${role}"> Roles </td>
+                    <!--<td th:each="role : ${user.getRoles()}" th:text="${role.getName()}"></td>-->
+                </tr >
+            </table>
         </div>
     </body>
 </html>

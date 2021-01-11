@@ -129,14 +129,6 @@ public class User implements UserDetails {
                 + "\n";
     }
 
-    public String toStringHTML() {
-        return "<hr>Id = "              + id
-                + "<br>First Name = "   + firstName
-                + "<br>Last Name = "    + lastName
-                + "<br>Email = "        + email
-                + "<hr>";
-    }
-
     @Override
     @Transient
     public boolean isAccountNonExpired() {

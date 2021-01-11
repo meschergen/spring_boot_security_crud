@@ -11,11 +11,6 @@
                     <h1 th:text="${msg}"></h1>
                 </th:block>
             </div>
-
-            <div sec:authorize="hasRole('ADMIN')">
-                <a href="/users"> USER_LIST </a>
-            </div>
-
         </div>
     </body>
 </html>
