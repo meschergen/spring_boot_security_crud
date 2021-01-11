@@ -50,12 +50,12 @@ public class UsersController {
     }*/
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping()
-    public String list(ModelMap model, Principal principal){
+    @GetMapping({"", "/list"}) //  '/list' - попытка решить очистку таблицы пользователей, при ошибках, в добавлении пользоватея
+    public String list(@ModelAttribute("user") User user, ModelMap model, Principal principal){
 
         if(principal != null) {
-            User user = userRepository.getByUsername(principal.getName());
-            model.addAttribute("userId", user.getId());
+            User userPr = userRepository.getByUsername(principal.getName());
+            model.addAttribute("userId", userPr.getId());
         }
         model.addAttribute("userList", userRepository.findAll());
         return "users/list";
@@ -126,7 +126,8 @@ public class UsersController {
 
         if (bindingResult.hasErrors()) {
             if (principal != null) {
-                return "users/new";
+                //return "users/new";
+                return "users/list";
             } else {
                 return "users/registration";
             }

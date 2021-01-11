@@ -5,39 +5,78 @@
         <title>UserList</title>
     </head>
     <body>
-    <div layout:fragment="content">
-            <table class="table table-hover">
-                <tr>
-                    <th scope="col"> ID </th>
-                    <th scope="col"> Name </th>
-                    <th scope="col"> Surname </th>
-                    <th scope="col"> Email </th>
-                    <th scope="col"> Username </th>
-                    <th scope="col"> Password </th>
-                    <th scope="col"> Info </th>
-                    <th scope="col"> Edit </th>
-                    <th scope="col"> Delete </th>
+        <div layout:fragment="content">
+            <h1> ADMIN PAGE </h1>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" th:href="@{#list}"> User list</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" th:href="@{#add}"> Add user</a>
+                </li>
+            </ul>
 
-                </tr>
-                <tr  th:each="user : ${userList}">
-                    <td th:utext="${user.getId()}"> ID </td>
-                    <td th:utext="${user.getFirstName()}"> Name </td>
-                    <td th:utext="${user.getLastName()}"> Surname </td>
-                    <td th:utext="${user.getEmail()}"> Email </td>
-                    <td th:utext="${user.getUsername()}"> Username </td>
-                    <td th:utext="${user.getPassword()}"> Password </td>
-                    <td> <a th:href="@{/users/{id}(id=${user.getId()})}" th:utext="Link"> Info </a> </td>
-                    <td> <a th:href="@{/users/{id}/edit(id=${user.getId()})}" th:utext="Edit"> Edit </a> </td>
-                    <td>
-                        <form th:action="@{/users/{id}(id=${user.getId()})}" th:method="DELETE">
-                            <button type="submit" class="btn btn-danger"> Delete </button>
-                        </form>
-                    </td>
-                </tr >
-            </table>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="list">
+                    <table class="table table-hover">
+                        <tr>
+                            <th scope="col"> ID </th>
+                            <th scope="col"> Name </th>
+                            <th scope="col"> Surname </th>
+                            <th scope="col"> Email </th>
+                            <th scope="col"> Username </th>
+                            <th scope="col"> Password </th>
+                            <th scope="col"> Info </th>
+                            <th scope="col"> Edit </th>
+                            <th scope="col"> Delete </th>
 
-            <div>
-                <a href="/users/new"> ADD_USER </a>
+                        </tr>
+                        <tr  th:each="user : ${userList}">
+                            <td th:utext="${user.getId()}"> ID </td>
+                            <td th:utext="${user.getFirstName()}"> Name </td>
+                            <td th:utext="${user.getLastName()}"> Surname </td>
+                            <td th:utext="${user.getEmail()}"> Email </td>
+                            <td th:utext="${user.getUsername()}"> Username </td>
+                            <td th:utext="${user.getPassword()}"> Password </td>
+                            <td> <a th:href="@{/users/{id}(id=${user.getId()})}" th:utext="Link"> Info </a> </td>
+                            <td> <a th:href="@{/users/{id}/edit(id=${user.getId()})}" th:utext="Edit"> Edit </a> </td>
+                            <td>
+                                <form th:action="@{/users/{id}(id=${user.getId()})}" th:method="DELETE">
+                                    <button type="submit" class="btn btn-danger"> Delete </button>
+                                </form>
+                            </td>
+                        </tr >
+                    </table>
+                </div>
+
+                <div class="tab-pane fade" id="add">
+                    <form th:method="POST" th:action="@{/users}" th:object="${user}">
+                        <label for="firstName"> Enter first name </label>
+                        <input type="text" th:field="*{firstName}" id="firstName" required>
+                        <div style="color: orangered" th:errors="*{firstName}"> Error </div>
+                        <hr>
+                        <label for="lastName"> Enter last name </label>
+                        <input type="text" th:field="*{lastName}" id="lastName" required>
+                        <div style="color: orangered" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"> Error </div>
+                        <hr>
+                        <label for="email"> Enter email </label>
+                        <input type="text" th:field="*{email}" id="email" required>
+                        <div style="color: orangered" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"> Error </div>
+                        <hr>
+
+                        <label for="username"> Enter username </label>
+                        <input type="text" th:field="*{username}" id="username" required>
+                        <div style="color: orangered" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"> Error </div>
+                        <hr>
+
+                        <label for="password"> Enter password </label>
+                        <input type="text" th:field="*{password}" id="password" required>
+                        <div style="color: orangered" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"> Error </div>
+                        <hr>
+
+                        <input type="submit" value="Add user">
+                    </form>
+                </div>
             </div>
         </div>
     </body>
