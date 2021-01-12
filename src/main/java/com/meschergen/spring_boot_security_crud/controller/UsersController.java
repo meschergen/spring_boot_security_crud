@@ -1,7 +1,9 @@
 package com.meschergen.spring_boot_security_crud.controller;
 
 import com.meschergen.spring_boot_security_crud.exception.AccessForbiddenException;
+import com.meschergen.spring_boot_security_crud.model.Role;
 import com.meschergen.spring_boot_security_crud.model.User;
+import com.meschergen.spring_boot_security_crud.repository.RoleRepository;
 import com.meschergen.spring_boot_security_crud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -24,6 +27,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 16.12.2020
@@ -36,6 +42,8 @@ import java.security.Principal;
 public class UsersController {
 
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
+    private PasswordEncoder passwordEncoder;
 
     /*@Resource(name = "curUser")
     private User currentUser;*/
@@ -43,6 +51,16 @@ public class UsersController {
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
     }
 
     /*public UserRepository getUserRepository() {
@@ -132,6 +150,11 @@ public class UsersController {
                 return "users/registration";
             }
         }
+
+        Set<Role> roles = new HashSet<>();
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        roles.add(roleRepository.getOne(2L)); // TODO: Роли должны приходить из формы
+        user.setRoles(roles);
 
         userRepository.save(user);
         if (principal != null) {
