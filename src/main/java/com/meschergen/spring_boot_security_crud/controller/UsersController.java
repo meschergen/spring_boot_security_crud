@@ -75,6 +75,7 @@ public class UsersController {
             User userPr = userRepository.getByUsername(principal.getName());
             model.addAttribute("userId", userPr.getId());
         }
+        model.addAttribute("roleList", roleRepository.findAll());
         model.addAttribute("userList", userRepository.findAll());
         return "users/list";
     }
@@ -139,8 +140,9 @@ public class UsersController {
     }
 
     @PostMapping("/**")
-    public String insertIntoDatabase(@ModelAttribute("user") @Valid User user,
-                                     BindingResult bindingResult, Principal principal) {
+    public String insertIntoDatabase(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
+                                     @RequestParam(value = "selectedRoles", required = false) Long[] selectedRoles,
+                                      Principal principal) {
 
         if (bindingResult.hasErrors()) {
             if (principal != null) {
@@ -151,9 +153,16 @@ public class UsersController {
             }
         }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // хеширование введённого пароля
         Set<Role> roles = new HashSet<>();
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        roles.add(roleRepository.getOne(2L)); // TODO: Роли должны приходить из формы
+
+        if (selectedRoles != null) {
+            for (Long roleId : selectedRoles) {
+                roles.add(roleRepository.getOne(roleId));
+            }
+        } else { // COSTYL если не выделенно ни одной роли всё равно добаляем роль пользователя
+            roles.add(roleRepository.getOne(2L)); // ROLE_USER
+        }
         user.setRoles(roles);
 
         userRepository.save(user);
