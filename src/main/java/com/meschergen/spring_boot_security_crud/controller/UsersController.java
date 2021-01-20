@@ -29,6 +29,7 @@ import java.lang.annotation.Target;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -128,10 +129,23 @@ public class UsersController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}/edit")
+    //@ResponseBody // public User // Optional<User>
     public String editUserInfo(@PathVariable("id") long id, ModelMap model){
         model.addAttribute("user", userRepository.getOne(id));
-        return "users/edit";
+        //return "users/edit";
+        //return userRepository.getOne(id);
+        //return userRepository.findById(id);
+        //return "users/list :: modalEdit";
+        return "users/list";
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/edit")
+    @ResponseBody
+    public User editUserModal(Long id) {
+        return userRepository.getOne(id);
+    }
+
 
     @PreAuthorize("isAnonymous()")
     @GetMapping("/registration")

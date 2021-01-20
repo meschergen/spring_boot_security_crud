@@ -3,11 +3,32 @@
     <head>
         <meta charset="UTF-8">
         <title>UserList</title>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                //alert("hi hi");
+                $('.editBtn').on('click',function(event) {
+                    event.preventDefault();
+                    var href = $(this).attr('href');
+
+                    $.get(href, function(userToEdit, status) {
+                        $('#firstNameEdit').val(userToEdit.firstName);
+                        $('#lastNameEdit').val(userToEdit.lastName);
+                        $('#emailEdit').val(userToEdit.email);
+                        $('#usernameEdit').val(userToEdit.username);
+                        $('#passwordEdit').val(userToEdit.password);
+                    });
+
+                    $('#editModal').modal();
+                });
+
+            });
+        </script>
     </head>
     <body>
         <div layout:fragment="content">
 
-            <div class="modal fade" id="editModal" role="dialog" aria-labelledby="editUserLabel" aria-hidden="true">
+            <div class="modal fade" id="editModal" role="dialog" aria-labelledby="editUserLabel" aria-hidden="true" th:fragment="modalEdit">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -94,8 +115,10 @@
                             <td>
                                 <!--<form th:action="@{/users/{id}/edit(id=${user.getId()})}" th:method="GET">
                                     <button type="submit" class="btn btn-primary"> Edit </button>
-                                </form> -->
-                                <a class="btn btn-outline-primary"  th:href="@{users/modals/edit/(id=${user.getId()})}"> Edit </a>
+                                </form>
+                                <a class="btn btn-outline-primary editBtn"  th:href="@{/users/{id}/edit(id=${user.getId()})}"> Edit </a>-->
+                                <a class="btn btn-outline-primary"  th:href="@{users/edit/(id=${user.getId()})}"> Edit </a>
+
                             </td>
                             <td>
                                 <form th:action="@{/users/{id}(id=${user.getId()})}" th:method="DELETE">
@@ -155,27 +178,6 @@
             </div>
         </div>
 
-        <script type="text/javascript">
-            $('document').ready(function () {
-
-                $('.table .btn-outline-primary').on('click',function(event) {
-
-                    event.preventDefault();
-                    var href = $(this).attr('href');
-
-                    $.get(href,function(user, status) {
-                        $('#firstNameEdit').val(user.getFirstName());
-                        $('#lastNameEdit').val(user.getLastName());
-                        $('#emailEdit').val(user.getEmail());
-                        $('#usernameEdit').val(user.getUsename());
-                        $('#passwordEdit').val(user.getId());
-                    });
-
-                    $('#editModal').modal();
-                });
-
-            });
-        </script>
         <!--<script type="text/javascript">
             // попытка через "куки" сохранять последнюю вкладку, чтобы при вводе неправильных данных,
             // и перезагрузке страницы, сразу открывалясь вкладка добавления
