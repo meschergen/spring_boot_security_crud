@@ -1,5 +1,6 @@
 package com.meschergen.spring_boot_security_crud.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -88,16 +89,17 @@ public class User implements UserDetails {
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JsonIgnore
     public Set<Role> getRoles() {
         return roles;
     }
 
     @Override
     @Transient
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
     }
-
 
     public void setId(Long id) { this.id = id; }
 
@@ -131,24 +133,28 @@ public class User implements UserDetails {
 
     @Override
     @Transient
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
     @Transient
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
     @Transient
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
     @Transient
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
