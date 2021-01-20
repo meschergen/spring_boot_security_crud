@@ -3,14 +3,20 @@
     <head>
         <meta charset="UTF-8">
         <title>Prod'aksh_N x)</title>
+
+        <script type="text/javascript">
+            fetch("/welcome")
+            .then(response => response.text())
+            .then(response => {
+                document.getElementById('welcomeMsg').innerHTML = response;
+            }).catch(function(err) {
+                console.log(err)
+            });
+        </script>
     </head>
     <body>
         <div layout:fragment="content" class="col-md-8 offset-md-2 mt-5">
-            <div>
-                <th:block th:each="msg : ${messages}">
-                    <h1 th:text="${msg}"></h1>
-                </th:block>
-            </div>
+            <h1 id="welcomeMsg"> WELCOME </h1>
         </div>
     </body>
 </html>

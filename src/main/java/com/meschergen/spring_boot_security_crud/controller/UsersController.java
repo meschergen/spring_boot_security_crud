@@ -1,17 +1,12 @@
 package com.meschergen.spring_boot_security_crud.controller;
 
-import com.meschergen.spring_boot_security_crud.exception.AccessForbiddenException;
 import com.meschergen.spring_boot_security_crud.model.Role;
 import com.meschergen.spring_boot_security_crud.model.User;
 import com.meschergen.spring_boot_security_crud.repository.RoleRepository;
 import com.meschergen.spring_boot_security_crud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,20 +15,13 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 /**
- * 16.12.2020
+ * 10.01.2021
  *
  * @author MescheRGen
  */
@@ -46,8 +34,6 @@ public class UsersController {
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
 
-    /*@Resource(name = "curUser")
-    private User currentUser;*/
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -64,12 +50,9 @@ public class UsersController {
         this.roleRepository = roleRepository;
     }
 
-    /*public UserRepository getUserRepository() {
-        return userRepository;
-    }*/
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping({"", "/list"}) //  '/list' - попытка решить очистку таблицы пользователей, при ошибках, в добавлении пользоватея
+    @GetMapping({"", "/list"})
     public String list(@ModelAttribute("user") User user, ModelMap model, Principal principal){
 
         if(principal != null) {
@@ -81,18 +64,10 @@ public class UsersController {
         return "users/list";
     }
 
-    //@PreAuthorize("hasRole('ADMIN') OR authentication.name == #u.findById(#id).get().getUsername()") //@P("u")UserRepository ur
-    //@PreAuthorize("hasRole('ADMIN') OR #id == #user.getId()") //@CurrentUser User user
     @PreAuthorize("hasAnyRole('ADMIN, USER')")
     @GetMapping("/{id}")
     public String userInfo(@PathVariable("id") long id, ModelMap model, Principal principal){
         User user = userRepository.getByUsername(principal.getName());
-        /*if (user.getId() == id || SecurityContextHolder
-                                        .getContext()
-                                        .getAuthentication()
-                                        .getAuthorities()
-                                        .stream()
-                                        .anyMatch(a -> a.getAuthority().equals("ADMIN"))) {*/ // ROLE_ADMIN?
 
         if(AuthorityUtils.authorityListToSet(SecurityContextHolder
                                                 .getContext()
@@ -104,22 +79,9 @@ public class UsersController {
             model.addAttribute("user", userRepository.getOne(id));
             return "users/info";
         } else {
-            //throw new AccessForbiddenException(); // без привязки к spring security
-            throw new AccessDeniedException("403 returned"); // привязка к spring security
+            throw new AccessDeniedException("403 returned");
         }
     }
-
-    /*@Bean(name = "curUser")
-    @Lazy
-    public User getCurrentUser() {
-        return userRepository.getByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-    }*/
-
-    /*@Target({ ElementType.PARAMETER })
-    @Retention(RetentionPolicy.RUNTIME)
-    @AuthenticationPrincipal
-    public @interface CurrentUser {
-    }*/
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/new")
@@ -129,13 +91,8 @@ public class UsersController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}/edit")
-    //@ResponseBody // public User // Optional<User>
     public String editUserInfo(@PathVariable("id") long id, ModelMap model){
         model.addAttribute("user", userRepository.getOne(id));
-        //return "users/edit";
-        //return userRepository.getOne(id);
-        //return userRepository.findById(id);
-        //return "users/list :: modalEdit";
         return "users/list";
     }
 

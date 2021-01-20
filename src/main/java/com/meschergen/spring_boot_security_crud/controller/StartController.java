@@ -3,20 +3,26 @@ package com.meschergen.spring_boot_security_crud.controller;
 import com.meschergen.spring_boot_security_crud.model.User;
 import com.meschergen.spring_boot_security_crud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 16.12.2020
+ * 12.01.2021
  *
  * @author MescheRGen
  */
-@Controller
+@RestController
+@RequestMapping("/welcome")
 public class StartController {
 
     private UserRepository userRepository;
@@ -26,20 +32,27 @@ public class StartController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/")
-    public String printWelcome(ModelMap model, Principal principal) {
-        List<String> messages = new ArrayList<>();
+    @GetMapping
+    public ResponseEntity<String> printWelcome(Principal principal) {
+        StringBuilder sb = new StringBuilder();
         if(principal != null) {
             User user = userRepository.getByUsername(principal.getName());
-            messages.add(String.format("Hello, %s!",user.getFirstName()));
-            model.addAttribute("userId", user.getId());
+            sb.append(String.format("Hello, %s!<br>",user.getFirstName()));
+            //model.addAttribute("userId", user.getId()); // for debug access
         } else {
-            messages.add("Hello, anonymous!");
+            sb.append("Hello, anonymous!<br>");
         }
 
-        messages.add("Im OK, and SECURE! :)");
-        messages.add("And Running by Spring Boot");
-        model.addAttribute("messages", messages);
-        return "index";
+        sb.append("Im RESTful, SECURE and FANCY! :)<br>");
+        sb.append("Im Running by Spring Boot<br>");
+
+        //return new ResponseEntity<>(sb.toString(), HttpStatus.OK);
+        return ResponseEntity.ok(sb.toString());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping({"/users"})
+    public ResponseEntity<?> list(){
+        return ResponseEntity.ok(userRepository.findAll());
     }
 }
