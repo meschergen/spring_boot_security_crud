@@ -143,7 +143,8 @@ public class UsersController {
     @GetMapping("/edit")
     @ResponseBody
     public User editUserModal(Long id) {
-        return userRepository.getOne(id);
+        //return userRepository.getOne(id);
+        return userRepository.findById(id).get();
     }
 
 
