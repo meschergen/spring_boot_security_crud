@@ -147,6 +147,13 @@ public class UsersController {
         return userRepository.findById(id).get();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/confirmDelete")
+    @ResponseBody
+    public User confirmDeleteUserModal(Long id) {
+        return userRepository.findById(id).get();
+    }
+
 
     @PreAuthorize("isAnonymous()")
     @GetMapping("/registration")
@@ -169,16 +176,8 @@ public class UsersController {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword())); // хеширование введённого пароля
-        Set<Role> roles = new HashSet<>();
 
-        if (selectedRoles != null) {
-            for (Long roleId : selectedRoles) {
-                roles.add(roleRepository.getOne(roleId));
-            }
-        } else { // COSTYL если не выделенно ни одной роли всё равно добаляем роль пользователя
-            roles.add(roleRepository.getOne(2L)); // ROLE_USER
-        }
-        user.setRoles(roles);
+        user.setRoles(getRoleSet(selectedRoles));
 
         userRepository.save(user);
         if (principal != null) {
@@ -191,11 +190,15 @@ public class UsersController {
     @PatchMapping("/{id}")
     public String updateUser(@ModelAttribute("user") @Valid User user,
                              BindingResult bindingResult,
-                             @PathVariable("id") long id) { // просто убрать id?
+                             @PathVariable("id") long id,
+                             @RequestParam(value = "selectedRolesEdit", required = false) Long[] selectedRolesEdit) { // просто убрать id?
 
         if (bindingResult.hasErrors()) {
-            return "users/edit";
+            //return "users/edit"; // OLD
+            return "users/list";
         }
+
+        user.setRoles(getRoleSet(selectedRolesEdit));
         userRepository.save(user);
         return "redirect:/users";
     }
@@ -207,5 +210,18 @@ public class UsersController {
         return "redirect:/users";
     }
 
+    private Set<Role> getRoleSet(Long[] selectedRoles) {
+        Set<Role> roles = new HashSet<>();
+
+        if (selectedRoles != null) {
+            for (Long roleId : selectedRoles) {
+                roles.add(roleRepository.getOne(roleId));
+            }
+        } else { // COSTYL если не выделенно ни одной роли всё равно добаляем роль пользователя
+            roles.add(roleRepository.getOne(2L)); // ROLE_USER
+        }
+
+        return roles;
+    }
 
 }

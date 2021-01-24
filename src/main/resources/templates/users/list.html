@@ -7,6 +7,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 //alert("hi hi");
+
                 $('.editBtn').on('click',function(event) {
                     event.preventDefault();
                     var href = $(this).attr('href');
@@ -17,9 +18,29 @@
                         $('#emailEdit').val(userToEdit.email);
                         $('#usernameEdit').val(userToEdit.username);
                         $('#passwordEdit').val(userToEdit.password);
+
+                        //$('#editForm').attr('action', '@{/users/' + userToEdit.id + '}');
+                        $('#editForm').attr('action', '/users/' + userToEdit.id);
+                        //$('#editForm').attr('object', userToEdit);
                     });
 
                     $('#editModal').modal();
+                });
+
+                $('.deleteBtn').on('click',function(event) {
+                    event.preventDefault();
+                    var href = $(this).attr('href');
+
+                    $.get(href, function(userToDelete, status) {
+                        $('#deleteMessage').html('Are you sure, you want to delete user "'
+                                                                                + userToDelete.username
+                                                                                + '" (' + userToDelete.firstName + ' '
+                                                                                + userToDelete.lastName + ') ?');
+
+                        $('#deleteForm').attr('action', '/users/' + userToDelete.id);
+                    });
+
+                    $('#deleteModal').modal();
                 });
 
             });
@@ -37,43 +58,90 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body">
-                            <form th:method="PATCH" th:action="@{/users/{id}(id = ${user.getId()})}" th:object="${user}">
-                                <label for="firstNameEdit"> Enter first name </label>
-                                <input type="text" th:field="*{firstName}" id="firstNameEdit" required>
-                                <div style="color: orangered" th:errors="*{firstName}"> Error </div>
-                                <hr>
+                        <form id="editForm" th:method="PATCH" th:action="@{/users/{id}(id = ${user.getId()})}" th:object="${user}"> <!--форма НАД body, чтобы поместить SUBMIT в footer;-->
+                                                                                                                                    <!--action меняется в js-->
+                            <div class="modal-body">
+                                <div class="form-group col-md-6 offset-md-3">
+                                    <label for="firstNameEdit" class="font-weight-bold d-flex justify-content-center"> Enter first name </label>
+                                    <input type="text" class="form-control" th:field="*{firstName}" id="firstNameEdit" required>
+                                    <div style="color: orangered" th:errors="*{firstName}"> Error </div>
+                                </div>
 
-                                <label for="lastNameEdit"> Enter last name </label>
-                                <input type="text" th:field="*{lastName}" id="lastNameEdit" required>
-                                <div style="color: orangered" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"> Error </div>
-                                <hr>
+                                <div class="form-group col-md-6 offset-md-3">
+                                    <label for="lastNameEdit" class="font-weight-bold d-flex justify-content-center"> Enter last name </label>
+                                    <input type="text" class="form-control" th:field="*{lastName}" id="lastNameEdit" required>
+                                    <div style="color: orangered" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"> Error </div>
+                                </div>
 
-                                <label for="emailEdit"> Enter email </label>
-                                <input type="email" th:field="*{email}" id="emailEdit" required>
-                                <div style="color: orangered" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"> Error </div>
-                                <hr>
+                                <div class="form-group col-md-6 offset-md-3">
+                                    <label for="emailEdit" class="font-weight-bold d-flex justify-content-center"> Enter email </label>
+                                    <input type="text" class="form-control" th:field="*{email}" id="emailEdit" required>
+                                    <div style="color: orangered" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"> Error </div>
+                                </div>
 
-                                <label for="usernameEdit"> Enter username </label>
-                                <input type="text" th:field="*{username}" id="usernameEdit" required>
-                                <div style="color: orangered" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"> Error </div>
-                                <hr>
+                                <div class="form-group col-md-6 offset-md-3">
+                                    <label for="usernameEdit" class="font-weight-bold d-flex justify-content-center"> Enter username </label>
+                                    <input type="text" class="form-control" th:field="*{username}" id="usernameEdit" required>
+                                    <div style="color: orangered" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"> Error </div>
+                                </div>
 
-                                <label for="passwordEdit"> Enter password (hash) </label>
-                                <input type="text" th:field="*{password}" id="passwordEdit" required>
-                                <div style="color: orangered" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"> Error </div>
-                                <hr>
+                                <div class="form-group col-md-6 offset-md-3">
+                                    <label for="passwordEdit" class="font-weight-bold d-flex justify-content-center"> Enter password(hash) </label>
+                                    <input type="text" class="form-control" th:field="*{password}" id="passwordEdit" required>
+                                    <div style="color: orangered" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"> Error </div>
+                                </div>
 
-                                <input type="submit" value="Update user">
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal"> Close </button>
-                            <button type="submit" class="btn btn-primary" > Update user(m)</button>
-                        </div>
+                                <th:block th:each="ro : ${roleList}">
+                                    <div class="form-group col-md-6 offset-md-3 form-check-inline">
+                                        <label th:for="${ro.id}" th:text="${ro.name}" class="font-weight-bold d-flex justify-content-center"></label>
+                                        <input type="checkbox" class="form-check-input" name="selectedRolesEdit" th:id="${ro.id}" th:value="${ro.id}">
+                                    </div>
+                                </th:block>
+
+                            </div>
+                            <div class="modal-footer">
+                                <div>
+                                    <button type="button" class="btn btn-secondary btn-lg btn-block" data-dismiss="modal"> Cancel </button>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block"> Update user </button>
+                                </div>
+                            </div>
+
+                        </form>
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="deleteModal" role="dialog" aria-labelledby="editUserLabel" aria-hidden="true" th:fragment="modalEdit">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteUserLabel"> Delete User </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="deleteForm" th:method="DELETE" th:action="@{/users/{id}(id = ${user.getId()})}" th:object="${user}">  <!--форма НАД body, чтобы поместить SUBMIT в footer;-->
+                                                                                                                                        <!--action меняется в js-->
+                            <div class="modal-body">
+                                <h5 id="deleteMessage"> </h5>
+                            </div>
+                            <div class="modal-footer">
+                                <div>
+                                    <button type="button" class="btn btn-secondary btn-lg btn-block" data-dismiss="modal"> Nope </button>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-danger btn-lg btn-block"> Delete user </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+
 
             <h1> ADMIN PAGE </h1>
             <ul class="nav nav-tabs">
@@ -121,9 +189,10 @@
 
                             </td>
                             <td>
-                                <form th:action="@{/users/{id}(id=${user.getId()})}" th:method="DELETE">
+                                <!--<form th:action="@{/users/{id}(id=${user.getId()})}" th:method="DELETE">
                                     <button type="submit" class="btn btn-danger"> Delete </button>
-                                </form>
+                                </form>-->
+                                <a class="btn btn-danger deleteBtn"  th:href="@{users/confirmDelete/(id=${user.getId()})}"> Delete </a>
                             </td>
                         </tr >
                     </table>
