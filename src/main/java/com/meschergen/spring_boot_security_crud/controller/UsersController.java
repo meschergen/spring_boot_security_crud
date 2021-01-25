@@ -5,6 +5,7 @@ import com.meschergen.spring_boot_security_crud.model.User;
 import com.meschergen.spring_boot_security_crud.repository.RoleRepository;
 import com.meschergen.spring_boot_security_crud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -14,10 +15,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -26,7 +29,7 @@ import java.util.Set;
  * @author MescheRGen
  */
 
-@Controller
+@RestController
 @RequestMapping("/users")
 public class UsersController {
 
@@ -51,22 +54,36 @@ public class UsersController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+   /* @PreAuthorize("hasRole('ADMIN')")
     @GetMapping({"", "/list"})
     public String list(@ModelAttribute("user") User user, ModelMap model, Principal principal){
 
-        if(principal != null) {
+        /*if(principal != null) {
             User userPr = userRepository.getByUsername(principal.getName());
             model.addAttribute("userId", userPr.getId());
         }
         model.addAttribute("roleList", roleRepository.findAll());
         model.addAttribute("userList", userRepository.findAll());
         return "users/list";
+    }*/
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping({"", "/list"})
+    public ModelAndView list(ModelAndView modelAndView, @ModelAttribute("user") User user) {
+        modelAndView.setViewName("/users/list");
+        return modelAndView;
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping({"/getAllUsers"})
+    public ResponseEntity<List<User>> list(){
+        return ResponseEntity.ok(userRepository.findAll());
+    }
+
 
     @PreAuthorize("hasAnyRole('ADMIN, USER')")
     @GetMapping("/{id}")
-    public String userInfo(@PathVariable("id") long id, ModelMap model, Principal principal){
+    public ModelAndView userInfo(@PathVariable("id") long id, ModelAndView modelAndView, Principal principal){
         User user = userRepository.getByUsername(principal.getName());
 
         if(AuthorityUtils.authorityListToSet(SecurityContextHolder
@@ -75,52 +92,57 @@ public class UsersController {
                                                 .getAuthorities())
                                                 .contains("ROLE_ADMIN") || user.getId() == id) {
 
-            model.addAttribute("userId", id);
-            model.addAttribute("user", userRepository.getOne(id));
-            return "users/info";
+            modelAndView.addObject("userId", id);
+            modelAndView.addObject("user", userRepository.getOne(id));
+            modelAndView.setViewName("/users/info");
+            return modelAndView;
         } else {
             throw new AccessDeniedException("403 returned");
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    /*@PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/new")
     public String addUser(@ModelAttribute("user") User user) {
         return "users/new";
-    }
+    }*/
 
-    @PreAuthorize("hasRole('ADMIN')")
+    /*@PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}/edit")
     public String editUserInfo(@PathVariable("id") long id, ModelMap model){
         model.addAttribute("user", userRepository.getOne(id));
         return "users/list";
-    }
+    }*/
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/edit")
-    @ResponseBody
-    public User editUserModal(Long id) {
-        return userRepository.getOne(id);
+    public ResponseEntity<User> editUserModal(Long id) {
+        return ResponseEntity.ok(userRepository.findById(id).get());
     }
 
 
     @PreAuthorize("isAnonymous()")
     @GetMapping("/registration")
-    public String userRegistration(@ModelAttribute("user") User user) {
-        return "users/registration";
+    public ModelAndView userRegistration(@ModelAttribute("user") User user, ModelAndView modelAndView) {
+        modelAndView.setViewName("users/registration");
+        return modelAndView;
     }
 
     @PostMapping("/**")
     public String insertIntoDatabase(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
                                      @RequestParam(value = "selectedRoles", required = false) Long[] selectedRoles,
-                                      Principal principal) {
+                                     Principal principal,
+                                     ModelAndView modelAndView) {
 
         if (bindingResult.hasErrors()) {
             if (principal != null) {
                 //return "users/new";
-                return "users/list";
+                //return "users/list";
+                modelAndView.setViewName("users/list");
+
             } else {
-                return "users/registration";
+                //return "users/registration";
+                modelAndView.setViewName("users/registration");
             }
         }
 

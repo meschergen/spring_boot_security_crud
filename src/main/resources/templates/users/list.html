@@ -5,32 +5,32 @@
         <title>UserList</title>
 
         <script type="text/javascript">
-            /*$(document).ready(function() {
-                //alert("hi hi");
-                $('.editBtn').on('click',function(event) {
-                    event.preventDefault();
-                    var href = $(this).attr('href');
-
-                    $.get(href, function(userToEdit, status) {
-                        $('#firstNameEdit').val(userToEdit.firstName);
-                        $('#lastNameEdit').val(userToEdit.lastName);
-                        $('#emailEdit').val(userToEdit.email);
-                        $('#usernameEdit').val(userToEdit.username);
-                        $('#passwordEdit').val(userToEdit.password);
-                    });
-
-                    $('#editModal').modal();
-                });
-
-
-                                                                , { // <- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            /*
+                                                                , {
                                                                 headers: {
                                                                     'Accept': 'application/json'
                                                                 }
                                                             }
             });*/
-            fetch("/welcome/users").then(response => response.text())
-                .then(response => console.log(response))
+            fetch("/users/getAllUsers").then(response => response.json())
+                .then(response => {
+                    //console.log(response);
+
+                    let table = document.getElementById('userTable');
+                    response.forEach(function (user) {
+                        let tr = document.createElement('tr');
+                        tr.innerHTML = '<td>' + user.id + '</td>' +
+                                        '<td>' + user.firstName + '</td>' +
+                                        '<td>' + user.lastName + '</td>' +
+                                        '<td>' + user.email + '</td>' +
+                                        '<td>' + user.username + '</td>' +
+                                        '<td>' + user.password + '</td>' +
+                                        '<td><form action="/users/' + user.id + '" method="GET"><button type="submit" class="btn btn-outline-info"> Link </button> </form></td>' +
+                                        '<td><a class="btn btn-outline-primary editBtn"  href="users/edit/' + user.id + '"> Edit </a></td>' +
+                                        '<td><a class="btn  btn-danger deleteBtn"  href="users/confirmDelete/' + user.id + '"> Delete </a></td>';
+                        table.appendChild(tr);
+                    });
+                })
                 .catch(function(err) {
                     console.log(err);
                 });
@@ -98,7 +98,7 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="list">
-                    <table class="table table-hover">
+                    <table class="table table-hover" id="userTable">
                         <tr>
                             <th scope="col"> ID </th>
                             <th scope="col"> Name </th>
@@ -111,32 +111,6 @@
                             <th scope="col"> Delete </th>
 
                         </tr>
-                        <tr  th:each="user : ${userList}">
-                            <td th:utext="${user.getId()}"> ID </td>
-                            <td th:utext="${user.getFirstName()}"> Name </td>
-                            <td th:utext="${user.getLastName()}"> Surname </td>
-                            <td th:utext="${user.getEmail()}"> Email </td>
-                            <td th:utext="${user.getUsername()}"> Username </td>
-                            <td th:utext="${user.getPassword()}"> Password </td>
-                            <td>
-                                <form th:action="@{/users/{id}(id=${user.getId()})}" th:method="GET">
-                                    <button type="submit" class="btn btn-outline-info"> Link </button>
-                                </form>
-                            </td>
-                            <td>
-                                <!--<form th:action="@{/users/{id}/edit(id=${user.getId()})}" th:method="GET">
-                                    <button type="submit" class="btn btn-primary"> Edit </button>
-                                </form>
-                                <a class="btn btn-outline-primary editBtn"  th:href="@{/users/{id}/edit(id=${user.getId()})}"> Edit </a>-->
-                                <a class="btn btn-outline-primary"  th:href="@{users/edit/(id=${user.getId()})}"> Edit </a>
-
-                            </td>
-                            <td>
-                                <form th:action="@{/users/{id}(id=${user.getId()})}" th:method="DELETE">
-                                    <button type="submit" class="btn btn-danger"> Delete </button>
-                                </form>
-                            </td>
-                        </tr >
                     </table>
                 </div>
 
